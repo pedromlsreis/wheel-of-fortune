@@ -1,0 +1,205 @@
+%A01
+%INPUT
+1
+1
+jeremias
+q
+%OUTPUT
+# 1 1 1
+# Bailado: O Lago dos Cisnes
+# Bailado: - ---- --- ------
+# * 0 00000 00000 jeremias
+%end
+
+%A02
+%INPUT
+1
+1
+jeremias
+#
+q
+%OUTPUT
+# 1 1 1
+# Bailado: O Lago dos Cisnes
+# Bailado: - ---- --- ------
+# * 0 00000 00000 jeremias
+# 1 1 1
+# Bailado: O Lago dos Cisnes
+# Bailado: - ---- --- ------
+# * 0 00000 00000 jeremias
+%end
+
+%A03
+%INPUT
+1
+1
+jeremias
+r
+l
+q
+%OUTPUT
+# 1 1 1
+# Bailado: O Lago dos Cisnes
+# Bailado: - L--- --- ------
+# * 0 00750 00000 jeremias
+%end
+
+%A04
+%INPUT
+1
+1
+jeremias
+r
+l
+r
+g
+r
+d
+r
+s
+r
+c
+q
+%OUTPUT
+# 1 1 1
+# Bailado: O Lago dos Cisnes
+# Bailado: - L-g- d-s C-s--s
+# * 0 02600 00000 jeremias
+%end
+
+%A05
+%INPUT
+1
+1
+jeremias
+r
+l
+r
+g
+r
+d
+r
+s
+r
+c
+r
+n
+q
+%OUTPUT
+# 1 0 1
+# Bailado: O Lago dos Cisnes
+# Bailado: - L-g- d-s C-sn-s
+# * 0 03050 00000 jeremias
+%end
+
+%A06
+%INPUT
+1
+1
+jeremias
+r
+x
+q
+%OUTPUT
+# 1 1 1
+# Bailado: O Lago dos Cisnes
+# Bailado: - ---- --- ------
+# * 0 00000 00000 jeremias
+%end
+
+%A07
+%INPUT
+1
+1
+jeremias
+f
+Não sei
+f
+Não sei
+f
+Não sei
+q
+%OUTPUT
+# 1 1 1
+# Bailado: O Lago dos Cisnes
+# Bailado: - ---- --- ------
+# * 0 00000 00000 jeremias
+%end
+
+%A08
+%INPUT
+1
+1
+jeremias
+f
+o lago dos cisnes
+%OUTPUT
+# 1 0 0
+# Bailado: O Lago dos Cisnes
+# Bailado: O Lago dos Cisnes
+# * 0 00000 06000 jeremias
+%end
+
+%A09
+%INPUT
+1
+2
+Maria
+Manel
+r
+l
+#
+r
+x
+#
+r
+g
+r
+x
+#
+f
+o lago dos cisnes
+%OUTPUT
+# 1 1 1
+# Bailado: O Lago dos Cisnes
+# Bailado: - L--- --- ------
+# * 0 00750 00000 Maria
+# - 0 00000 00000 Manel
+# 1 1 1
+# Bailado: O Lago dos Cisnes
+# Bailado: - L--- --- ------
+# - 0 00750 00000 Maria
+# * 0 00000 00000 Manel
+# 1 1 1
+# Bailado: O Lago dos Cisnes
+# Bailado: - L-g- --- ------
+# * 0 00750 00000 Maria
+# - 0 00150 00000 Manel
+# 1 0 0
+# Bailado: O Lago dos Cisnes
+# Bailado: O Lago dos Cisnes
+# * 0 00000 06750 Maria
+# - 0 00000 00000 Manel
+%end
+
+%A10
+%INPUT
+2
+1
+jeremias
+f
+o lago dos cisnes
+#
+f
+non, ou a va gloria de mandar
+%OUTPUT
+# 2 1 1
+# Filme: Non, ou a Va Gloria de Mandar
+# Filme: ---, -- - -- ------ -- ------
+# * 0 00000 00000 jeremias
+# 2 0 0
+# Filme: Non, ou a Va Gloria de Mandar
+# Filme: Non, ou a Va Gloria de Mandar
+# * 0 00000 06000 jeremias
+%end
+
