@@ -139,14 +139,6 @@ class Puzzle:
         """
         return f"{self.topic}{self.sep}{''.join(self.visible)}"
 
-    def reset_visible(self: Puzzle) -> list[str]:
-        """
-        Retorna a lista de caracteres visíveis ao seu estado inicial.
-        """
-        self.visible = ['-'] * len(self.secret)
-        self.format_visible()
-        return self.visible
-
     def get_existing_letters(self: Puzzle):
         """
         Atualiza as listas de vogais e consoantes existentes no puzzle.
@@ -289,6 +281,17 @@ class Game:
         self.vowel_purchase = True  # Indica se a compra de vogais está ativa
         self.free_consonants = "bcdfghjklmnpqrstvwxyz"  # Consoantes disp.
         self.wheel_active = True  # Indica se a roda da sorte está ativa
+        self.commands = {
+                '#': self.command_spy,
+                'a': self.command_authors,
+                'q': self.command_quit,
+                'r': self.command_wheel,
+                'i': self.command_inventario,
+                'c': self.command_commands,
+                'f': self.command_final,
+                'p': self.command_show,
+                'v': self.command_buy
+            }
         # Inicializa os puzzles
         self.puzzles = Puzzles(file_name)
         if len(self.puzzles.puzzles) < self.round_no:
@@ -585,7 +588,7 @@ class UI:
         Apresenta os autores do programa.
         """
         print("  Autores:")
-        print("    Pedro Miguel Reis")
+        print("\tPedro Miguel Reis")
 
     def command_quit(self: UI):
         """
@@ -599,38 +602,38 @@ class UI:
         Apresenta uma mensagem de ajuda.
         """
         print("  Comando inválido! Ajuda:")
-        msg = "    Pressione `c` seguido de `Enter` para listar os comandos"
+        msg = "\tPressione `c` seguido de `Enter` para listar os comandos"
         msg += " possíveis."
         print(msg)
-        print("    É possível usar letras maiúsculas ou minúsculas.")
+        print("\tÉ possível usar letras maiúsculas ou minúsculas.")
 
     def command_commands(self: UI):
         """
         Apresenta uma lista de comandos.
         """
         print("  Comandos:")
-        print("    c - Comandos (listar comandos)")
-        print("    i - Inventário (mostrar)")
-        print("    f - Finalizar puzzle")
-        print("    p - Puzzle (mostrar)")
-        print("    r - Roleta (rodar)")
-        print("    v - Vogal (comprar)")
-        print("    # - Espiar (mooshak)")
-        print("    q - Quit (terminar imediatamente)")
+        print("\tc - Comandos (listar comandos)")
+        print("\ti - Inventário (mostrar)")
+        print("\tf - Finalizar puzzle")
+        print("\tp - Puzzle (mostrar)")
+        print("\tr - Roleta (rodar)")
+        print("\tv - Vogal (comprar)")
+        print("\t# - Espiar (mooshak)")
+        print("\tq - Quit (terminar imediatamente)")
 
     def command_inventario(self: UI):
         """
         Apresenta o inventário dos jogadores.
         """
         print("  Inventário:")
-        print("    N.  Nome                Fichas   Ronda    Jogo")
+        print("\tN.  Nome                Fichas   Ronda    Jogo")
         for idx, player in enumerate(self.game.players.all):
             p_id = idx + 1
             p_name = player.name
             p_recuperacao = player.recuperacao
             p_money_round = player.money_round
             p_money_game = player.money_game
-            msg = f"    {p_id}{' '*max(0, 4-len(str(p_id)))}"
+            msg = f"\t{p_id}{' '*max(0, 4-len(str(p_id)))}"
             msg += f"{p_name}{' '*max(0, 20-len(p_name))}"
             msg += f"{p_recuperacao}{' '*max(0, 9-len(str(p_recuperacao)))}"
             msg += f"{p_money_round}{' '*max(0, 9-len(str(p_money_round)))}"
@@ -675,26 +678,30 @@ class UI:
         Permite ao utilizador comprar uma vogal.
         """
         cp = self.game.current_player
+        fv = self.game.free_vowels
         if cp.money_round >= 250:
             vowel = str(input("Qual a vogal? "))
             vowel = clean_text(vowel)
             cp.money_round -= 250
-            if vowel not in self.game.free_vowels:
+            if vowel not in fv:
                 print(f'"{vowel}" já foi levantada.')
                 print("Perde a vez. Para a próxima esteja com mais atenção.")
                 self.game.ficha_recuperacao()
             else:
-                self.game.free_vowels = self.game.free_vowels.replace(vowel, "")
+                self.game.free_vowels = fv.replace(vowel, "")
                 if len(self.game.free_vowels) == 0:
                     self.game.vowel_purchase = False
                 if vowel in self.game.current_puzzle.secret:
                     _, count = self.game.current_puzzle.find_letter(vowel)
                     if count > 0:
-                        msg = f'Encontrada(s) {count} ocorrência(s) de "{vowel}".'
+                        msg = f'Encontrada(s) {count} ocorrência(s) de '
+                        msg += f'"{vowel}".'
                         print(msg)
                         print(f" >> {self.game.current_puzzle.get_visible()}")
                     else:
-                        print(f'Não foram encontradas ocorrências de "{vowel}".')
+                        msg = 'Não foram encontradas ocorrências de '
+                        msg += f'"{vowel}".'
+                        print(msg)
                         print(f" >> {self.game.current_puzzle.get_visible()}")
                 else:
                     print(f'Não foram encontradas ocorrências de "{vowel}".')
@@ -716,6 +723,8 @@ class UI:
             cons = str(input(f"{result}. Qual a consoante? "))
             cons = clean_text(cons)
 
+            fc = self.game.free_consonants
+
             if (len(cons) != 1) or \
                     (cons not in "bcdfghjklmnpqrstvwxyz"):
                 print(f'"{cons}" não é uma letra válida.')
@@ -723,16 +732,17 @@ class UI:
                 self.game.current_player = self.game.players.get_next_player()
 
             elif (cons in curr_puzzle.visible) or \
-                    (cons not in self.game.free_consonants):
+                    (cons not in fc):
                 print(f'A letra "{cons}" já saiu e está à vista.')
                 print("Perde a vez. Para a próxima esteja com mais atenção.")
                 self.game.current_player = self.game.players.get_next_player()
 
             elif cons in curr_puzzle.secret:
                 _, count = curr_puzzle.find_letter(cons)
-                self.game.free_consonants = self.game.free_consonants.replace(cons, "")
+                fc = fc.replace(cons, "")
                 cpz = self.game.current_puzzle
-                cpz.existing_consonants = cpz.existing_consonants.replace(cons, "")
+                cpz.existing_consonants = cpz.existing_consonants.replace(
+                    cons, "")
                 if len(cpz.existing_consonants) == 0:
                     self.game.wheel_active = False
                 if count > 0:
@@ -764,28 +774,12 @@ class UI:
         """
         while self.game.running:
             command = self.input_command()
-            if command == '#':
-                self.command_spy()
-            elif command == 'a':
-                self.command_authors()
-            elif command == 'q':
-                self.command_quit()
-            elif command == 'r':
-                self.command_wheel()
-            elif command == 'i':
-                self.command_inventario()
-            elif command == 'c':
-                self.command_commands()
-            elif command == 'f':
-                self.command_final()
-            elif command == 'p':
-                self.command_show()
-            elif command == 'v':
-                self.command_buy()
+            if command in self.commands:
+                self.commands[command]()
             else:
                 self.command_help()
 
-        self.command_spy()  # linha necessária
+        self.command_spy()
 
     def run(self: UI):
         """
